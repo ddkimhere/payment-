@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-# 데이터 설정
+# 데이터 초기화
 if 'data' not in st.session_state:
     st.session_state.data = pd.DataFrame([
         {"학생명": "김철수", "기본교육비": 250000, "교재명": "", "교재비": 0, "납부확인": False},
@@ -9,40 +9,41 @@ if 'data' not in st.session_state:
         {"학생명": "박민호", "기본교육비": 300000, "교재명": "", "교재비": 0, "납부확인": False},
     ])
 
-st.set_page_config(page_title="학원 정산 시스템", layout="wide")
+# 1. 로그인/역할 선택 상태 설정
+if 'role' not in st.session_state:
+    st.session_state.role = None
 
-st.title("🏫 학원 교육비 & 교재비 정산 시스템")
+# 첫 화면 (역할 선택)
+if st.session_state.role is None:
+    st.title("🏫 학원 관리 시스템")
+    st.subheader("사용자를 선택해주세요.")
+    
+    col1, col2 = st.columns(2)
+    if col1.button("👩‍🏫 선생님 모드"):
+        st.session_state.role = "teacher"
+        st.rerun()
+    if col2.button("👤 운영자 모드"):
+        st.session_state.role = "admin"
+        st.rerun()
 
-# 검색
-search_name = st.text_input("🔍 학생 이름을 입력하세요", "")
-
-# 데이터 필터링
-df = st.session_state.data
-if search_name:
-    filtered_df = df[df['학생명'].str.contains(search_name)]
+# 역할별 화면 구성
 else:
-    filtered_df = df
+    st.sidebar.button("🔙 처음으로", on_click=lambda: st.session_state.update({"role": None}))
+    
+    if st.session_state.role == "teacher":
+        st.title("👩‍🏫 선생님 전용 화면")
+        # 교재비 입력 기능만 제공
+        search_name = st.text_input("🔍 학생 검색")
+        df = st.session_state.data
+        if search_name: df = df[df['학생명'].str.contains(search_name)]
+        
+        edited_df = st.data_editor(df, disabled=["학생명", "기본교육비", "납부확인"])
+        if st.button("저장"):
+            st.session_state.data.update(edited_df)
+            st.success("저장 완료!")
 
-st.subheader("📋 정산 리스트")
-
-# 데이터 편집기
-edited_df = st.data_editor(
-    filtered_df,
-    column_config={
-        "납부확인": st.column_config.CheckboxColumn("✅ 납부완료"),
-        "교재비": st.column_config.NumberColumn("💰 교재비 (원)", format="%d"),
-    },
-    disabled=["학생명", "기본교육비"],
-    num_rows="dynamic",
-    use_container_width=True
-)
-
-# 합계 계산
-total_tuition = edited_df['기본교육비'].sum()
-total_books = edited_df['교재비'].sum()
-st.info(f"💡 검색된 학생 합계: 교육비 {total_tuition:,}원 + 교재비 {total_books:,}원 = 총 {(total_tuition + total_books):,}원")
-
-# 저장 버튼
-if st.button("💾 변경사항 저장하기"):
-    st.session_state.data.update(edited_df)
-    st.success("데이터가 성공적으로 저장되었습니다!")
+    elif st.session_state.role == "admin":
+        st.title("👤 운영자 전용 화면")
+        # 전체 데이터 수정 및 삭제 기능
+        st.dataframe(st.session_state.data)
+        st.metric("총 매출", f"{(st.session_state.data['기본교육비'] + st.session_state.data['교재비']).sum():,}원")
