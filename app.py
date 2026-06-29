@@ -79,7 +79,39 @@ else:
             st.session_state.data.update(edited_df)
             st.success("저장 완료!")
 
-    elif st.session_state.role == "admin" and st.session_state.admin_authenticated:
-        st.title("👤 운영자 전용 화면")
-        st.dataframe(st.session_state.data, use_container_width=True)
-        st.metric("총 매출", f"{(st.session_state.data['기본교육비'] + st.session_state.data['교재비']).sum():,}원")
+  elif st.session_state.role == "admin" and st.session_state.admin_authenticated:
+        st.title("👤 운영자 전용 관리 페이지")
+        
+        # 1. 요약 대시보드
+        total_tuition = st.session_state.data['기본교육비'].sum()
+        total_books = st.session_state.data['교재비'].sum()
+        
+        col1, col2, col3 = st.columns(3)
+        col1.metric("총 교육비", f"{total_tuition:,}원")
+        col2.metric("총 교재비", f"{total_books:,}원")
+        col3.metric("전체 매출", f"{(total_tuition + total_books):,}원")
+
+        st.markdown("---")
+
+        # 2. 학생 데이터 편집 (추가/삭제 포함)
+        st.subheader("학생 정산 데이터 관리")
+        edited_df = st.data_editor(
+            st.session_state.data, 
+            num_rows="dynamic", 
+            use_container_width=True
+        )
+        
+        # 3. 저장 및 엑셀 다운로드 기능
+        col_btn1, col_btn2 = st.columns([1, 4])
+        if col_btn1.button("💾 데이터 저장"):
+            st.session_state.data = edited_df
+            st.success("데이터가 안전하게 저장되었습니다.")
+            
+        # 엑셀 다운로드 (CSV 변환)
+        csv = edited_df.to_csv(index=False).encode('utf-8-sig')
+        col_btn2.download_button(
+            label="📥 엑셀로 저장하기",
+            data=csv,
+            file_name='학원정산내역.csv',
+            mime='text/csv',
+        )
