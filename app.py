@@ -5,24 +5,28 @@ import datetime
 # 페이지 설정
 st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 
-# CSS: 버튼 중앙 정렬 및 글씨 크기/굵기 강화
+# CSS: 중앙 정렬 및 버튼 스타일 강화
 st.markdown("""
     <style>
-    .stButton > button {
-        width: 300px !important;
-        height: 180px !important;
-        font-size: 90px !important;
-        font-weight: 900 !important;
-        border-radius: 25px !important;
-        background: linear-gradient(135deg, #4f46e5, #818cf8) !important;
-        color: white !important;
-        margin: 0 auto;
-    }
-    .main-container {
+    /* 버튼 컨테이너 중앙 정렬 */
+    .row-widget.stButton {
         display: flex;
         justify-content: center;
-        gap: 50px;
-        margin-top: 100px;
+    }
+    /* 버튼 크기 및 폰트 설정 */
+    div.stButton > button {
+        width: 320px !important;
+        height: 200px !important;
+        font-size: 36px !important;
+        font-weight: 900 !important;
+        border-radius: 30px !important;
+        background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+        color: white !important;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        margin: 0 20px;
+    }
+    div.stButton > button:hover {
+        background: linear-gradient(135deg, #4f46e5, #4338ca) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -33,13 +37,12 @@ if 'data' not in st.session_state:
 if 'role' not in st.session_state: st.session_state.role = None
 if 'admin_authenticated' not in st.session_state: st.session_state.admin_authenticated = False
 
-# [1] 첫 화면: 중앙 정렬된 버튼
+# [1] 첫 화면
 if st.session_state.role is None:
-    st.markdown("<h1 style='text-align: center; margin-bottom: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; margin-bottom: 80px; font-size: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
     
-    # 버튼을 감싸는 레이아웃 (중앙 정렬)
+    # 버튼을 나란히 배치 (중앙 정렬)
     col1, col2 = st.columns([1, 1])
-    
     with col1:
         if st.button("👤 운영자 모드"):
             st.session_state.role = "admin_login"
@@ -49,7 +52,7 @@ if st.session_state.role is None:
             st.session_state.role = "teacher"
             st.rerun()
 
-# [2] 로그인 로직 및 기능 화면 (위와 동일)
+# [2] 기능 화면
 elif st.session_state.role == "admin_login":
     st.title("🔐 운영자 인증")
     if st.text_input("암호를 입력하세요", type="password") == "0107":
@@ -59,7 +62,9 @@ elif st.session_state.role == "admin_login":
     if st.button("돌아가기"):
         st.session_state.role = None
         st.rerun()
+
 else:
+    # 로그인 후 연도/월 선택
     col_a, col_b = st.columns(2)
     current_year = col_a.selectbox("연도", [2026, 2027])
     current_month = col_b.selectbox("월", list(range(1, 13)), index=datetime.datetime.now().month - 1)
