@@ -19,19 +19,25 @@ if st.session_state.role is None:
     st.title("🏫 학원 관리 시스템")
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 큰 버튼 만들기 (CSS 사용)
+    # 버튼 및 글씨체 크게 조정 (CSS)
     st.markdown("""
         <style>
         div.stButton > button:first-child {
             width: 100%;
-            height: 100px;
-            font-size: 24px;
-            font-weight: bold;
+            height: 150px;
+            font-size: 40px !important;
+            font-weight: 800;
+            border-radius: 20px;
+            background-color: #f0f2f6;
+            transition: 0.3s;
+        }
+        div.stButton > button:hover {
+            border: 3px solid #ff4b4b;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # 운영자 버튼 (암호 확인 로직)
+    # 운영자 버튼
     if st.button("👤 운영자 모드"):
         st.session_state.role = "admin_login"
         st.rerun()
@@ -60,6 +66,7 @@ elif st.session_state.role == "admin_login":
 
 # 역할별 화면
 else:
+    # 로그아웃 버튼을 우측 상단이나 사이드바에 배치 가능
     if st.button("🔙 로그아웃"):
         st.session_state.role = None
         st.session_state.admin_authenticated = False
