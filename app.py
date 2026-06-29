@@ -5,19 +5,20 @@ import datetime
 # 페이지 설정
 st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 
-# CSS: 버튼 중앙 정렬 및 스타일
+# CSS: 버튼 크기를 300px * 100px로 조정하고 중앙 배치
 st.markdown("""
     <style>
     div.stButton > button {
-        width: 600px !important;
-        height: 200px !important;
-        font-size: 50px !important;
-        font-weight: 900 !important;
-        border-radius: 30px !important;
+        width: 300px !important;
+        height: 100px !important;
+        font-size: 24px !important;
+        font-weight: 800 !important;
+        border-radius: 15px !important;
         background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
         color: white !important;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-        margin: 5px 0 !important;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        margin: 5px auto !important;
+        display: block;
     }
     </style>
 """, unsafe_allow_html=True)
