@@ -5,9 +5,22 @@ import datetime
 # 페이지 설정
 st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 
-# CSS: 버튼 크기와 폰트만 설정
+# CSS: 버튼 중앙 정렬 및 제목까지 완벽하게 정렬
 st.markdown("""
     <style>
+    /* 제목 중앙 정렬 */
+    .title-centered {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    /* 버튼들을 중앙으로 정렬하는 컨테이너 */
+    .button-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    /* 버튼 크기 및 폰트 설정 */
     div.stButton > button {
         width: 600px !important;
         height: 200px !important;
@@ -17,7 +30,6 @@ st.markdown("""
         background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
         color: white !important;
         box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-        margin-bottom: 10px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -25,23 +37,22 @@ st.markdown("""
 # 초기화
 if 'role' not in st.session_state: st.session_state.role = None
 
-# [1] 첫 화면: 중앙 정렬 핵심 로직
+# 첫 화면
 if st.session_state.role is None:
-    st.markdown("<h1 style='text-align: center; margin-bottom: 50px; font-size: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
+    # 중앙 정렬된 제목
+    st.markdown('<div class="title-centered"><h1>🏫 학원 관리 시스템</h1></div>', unsafe_allow_html=True)
     
-    # 3개의 열을 만들어 가운데(middle)에만 버튼 배치
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # 버튼 배치를 위한 중앙 컨테이너
+    st.markdown('<div class="button-wrapper">', unsafe_allow_html=True)
     
-    with col2: # 가운데 열에 버튼 배치
-        if st.button("👤 운영자 모드"):
-            st.session_state.role = "admin_login"
-            st.rerun()
+    if st.button("👤 운영자 모드"):
+        st.session_state.role = "admin_login"
+        st.rerun()
         
-        if st.button("👩‍🏫 선생님 모드"):
-            st.session_state.role = "teacher"
-            st.rerun()
+    if st.button("👩‍🏫 선생님 모드"):
+        st.session_state.role = "teacher"
+        st.rerun()
+        
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# (이하 로그인 및 기능 화면 로직은 동일)
-elif st.session_state.role == "admin_login":
-    # ... 기존 로그인 로직 ...
-    pass
+# (이후 기능 구현은 기존과 동일)
