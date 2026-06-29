@@ -1,18 +1,13 @@
 import streamlit as st
+import pandas as pd
+import datetime
 
 # 페이지 설정
 st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 
-# CSS: 화면 전체를 활용하여 버튼을 강제로 가로 중앙 배치
+# CSS: 버튼 중앙 정렬 및 스타일
 st.markdown("""
     <style>
-    /* 전체 화면 중앙 정렬 */
-    .block-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    /* 버튼 스타일 */
     div.stButton > button {
         width: 600px !important;
         height: 200px !important;
@@ -24,24 +19,19 @@ st.markdown("""
         box-shadow: 0 10px 15px rgba(0,0,0,0.3);
         margin: 5px 0 !important;
     }
-    h1 {
-        text-align: center;
-        margin-bottom: 50px !important;
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# 초기화
+# 세션 초기화
 if 'role' not in st.session_state: st.session_state.role = None
+if 'admin_authenticated' not in st.session_state: st.session_state.admin_authenticated = False
 
-# 첫 화면
+# [1] 첫 화면
 if st.session_state.role is None:
-    st.title("🏫 학원 관리 시스템")
+    st.markdown("<h1 style='text-align: center; margin-bottom: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
     
-    # 버튼을 중앙 정렬시키기 위한 핵심 로직
-    # 빈 열(col)을 활용하여 버튼 그룹을 중앙에 배치
+    # 버튼 배치를 위해 중앙 열 할당
     _, center_col, _ = st.columns([1, 2, 1])
-    
     with center_col:
         if st.button("👤 운영자 모드"):
             st.session_state.role = "admin_login"
@@ -49,3 +39,32 @@ if st.session_state.role is None:
         if st.button("👩‍🏫 선생님 모드"):
             st.session_state.role = "teacher"
             st.rerun()
+
+# [2] 운영자 로그인 (새 암호 적용)
+elif st.session_state.role == "admin_login":
+    st.title("🔐 운영자 인증")
+    # 변경된 암호 적용
+    if st.text_input("암호를 입력하세요", type="password") == "slzhfcjswo":
+        st.session_state.admin_authenticated = True
+        st.session_state.role = "admin"
+        st.rerun()
+    if st.button("돌아가기"):
+        st.session_state.role = None
+        st.rerun()
+
+# [3] 선생님 모드
+elif st.session_state.role == "teacher":
+    st.title("👩‍🏫 선생님 전용 화면")
+    if st.button("⬅️ 로그아웃"):
+        st.session_state.role = None
+        st.rerun()
+    # (선생님 기능 구현 자리)
+
+# [4] 운영자 모드
+elif st.session_state.role == "admin" and st.session_state.admin_authenticated:
+    st.title("👤 운영자 전용 화면")
+    if st.button("⬅️ 로그아웃"):
+        st.session_state.role = None
+        st.session_state.admin_authenticated = False
+        st.rerun()
+    # (운영자 기능 구현 자리)
