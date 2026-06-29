@@ -9,7 +9,7 @@ st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 st.markdown("""
     <style>
     div.stButton > button {
-        width: 600px !important;
+        width: 400x !important;
         height: 200px !important;
         font-size: 50px !important;
         font-weight: 900 !important;
@@ -33,7 +33,7 @@ if 'admin_authenticated' not in st.session_state: st.session_state.admin_authent
 if st.session_state.role is None:
     st.markdown("<h1 style='text-align: center; margin-bottom: 50px; font-size: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
     
-    if st.button("👤 운영자 모드"):
+    if st.button("font-size: 50px: 👤 운영자 모드"):
         st.session_state.role = "admin_login"
         st.rerun()
     
