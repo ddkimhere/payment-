@@ -5,13 +5,13 @@ import datetime
 # 페이지 설정
 st.set_page_config(page_title="학원 관리 시스템", layout="wide")
 
-# CSS: 중앙 정렬 및 버튼 스타일 강화
+# CSS: 중앙 정렬 및 버튼 간격 10px로 조정
 st.markdown("""
     <style>
-    /* 버튼 컨테이너 중앙 정렬 */
-    .row-widget.stButton {
-        display: flex;
-        justify-content: center;
+    /* 버튼들을 중앙으로 정렬하는 컨테이너 */
+    .stHorizontalBlock {
+        justify-content: center !important;
+        gap: 10px !important; /* 버튼 사이 간격 10px */
     }
     /* 버튼 크기 및 폰트 설정 */
     div.stButton > button {
@@ -23,7 +23,6 @@ st.markdown("""
         background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
         color: white !important;
         box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-        margin: 0 20px;
     }
     div.stButton > button:hover {
         background: linear-gradient(135deg, #4f46e5, #4338ca) !important;
@@ -41,7 +40,7 @@ if 'admin_authenticated' not in st.session_state: st.session_state.admin_authent
 if st.session_state.role is None:
     st.markdown("<h1 style='text-align: center; margin-bottom: 80px; font-size: 50px;'>🏫 학원 관리 시스템</h1>", unsafe_allow_html=True)
     
-    # 버튼을 나란히 배치 (중앙 정렬)
+    # 버튼 나란히 배치 (열 크기를 버튼 크기에 맞춰 좁게 설정)
     col1, col2 = st.columns([1, 1])
     with col1:
         if st.button("👤 운영자 모드"):
@@ -64,7 +63,6 @@ elif st.session_state.role == "admin_login":
         st.rerun()
 
 else:
-    # 로그인 후 연도/월 선택
     col_a, col_b = st.columns(2)
     current_year = col_a.selectbox("연도", [2026, 2027])
     current_month = col_b.selectbox("월", list(range(1, 13)), index=datetime.datetime.now().month - 1)
